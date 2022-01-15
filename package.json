@@ -1,0 +1,30 @@
+{
+  "name": "rua-api",
+  "version": "1.0.0",
+  "description": "Rua backend API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec node index.js",
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tesh254/rua-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tesh254/rua-api/issues"
+  },
+  "homepage": "https://github.com/tesh254/rua-api#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cors": "^2.8.5",
+    "esm": "^3.2.25",
+    "express": "^4.17.2",
+    "mailparser": "^3.4.0",
+    "morgan": "^1.10.0",
+    "smtp-server": "^3.9.0"
+  }
+}
