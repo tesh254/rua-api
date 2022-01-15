@@ -21,6 +21,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "cors": "^2.8.5",
+    "dotenv": "^12.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.2",
     "mailparser": "^3.4.0",

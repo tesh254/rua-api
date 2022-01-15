@@ -19,26 +19,28 @@ app.listen(4000, (err) => {
   console.log(`Server is running on port: 4000`);
 });
 
-const emailServer = new SMTPServer({
-  onData(stream, session, callback) {
-    parser(stream, {}, (err, parsed) => {
-      if (err) {
-        console.error("Error: ", err);
-      }
+if (process.env.IS_EMAIL_PROD === "yes") {
+  const emailServer = new SMTPServer({
+    onData(stream, session, callback) {
+      parser(stream, {}, (err, parsed) => {
+        if (err) {
+          console.error("Error: ", err);
+        }
 
-      axios
-        .post("https://d624-41-90-66-234.ngrok.io/emails", parsed)
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        axios
+          .post("https://d624-41-90-66-234.ngrok.io/emails", parsed)
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
-      stream.on("end", callback);
-    });
-  },
-  disabledCommands: ['AUTH']
-});
+        stream.on("end", callback);
+      });
+    },
+    disabledCommands: ["AUTH"],
+  });
 
-emailServer.listen(25, "18.185.110.231");
+  emailServer.listen(25, "18.185.110.231");
+}
