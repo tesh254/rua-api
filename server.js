@@ -42,5 +42,5 @@ if (process.env.IS_EMAIL_PROD === "yes") {
     disabledCommands: ["AUTH"],
   });
 
-  emailServer.listen(25, "18.185.110.231");
+  emailServer.listen(25);
 }
