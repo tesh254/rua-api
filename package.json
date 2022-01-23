@@ -19,11 +19,17 @@
   },
   "homepage": "https://github.com/tesh254/rua-api#readme",
   "dependencies": {
+    "@graphql-tools/schema": "^8.3.1",
+    "@prisma/client": "^3.8.1",
     "axios": "^0.24.0",
     "cors": "^2.8.5",
-    "dotenv": "^12.0.0",
+    "dotenv": "^12.0.4",
     "esm": "^3.2.25",
     "express": "^4.17.2",
+    "express-graphql": "^0.12.0",
+    "graphql": "^16.2.0",
+    "graphql-playground-middleware-express": "^1.7.23",
+    "jwt-simple": "^0.5.6",
     "mailparser": "^3.4.0",
     "morgan": "^1.10.0",
     "smtp-server": "^3.9.0"
