@@ -1,9 +1,102 @@
 generator client {
-    provider = "prisma-client.js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+model Account {
+  id               String                   @id @default(uuid())
+  email            String                   @unique
+  name             String?
+  name_slug        String?
+  account_avatar   String?
+  auth_type        String
+  password         String?
+  last_logged_in   String?
+  has_accepted_tos Boolean                  @default(true)
+  plan             Plan?
+  subscriptions    AccountOnSubscriptions[]
+  categories       Category[]
+  feed             Feed[]
+  highlights       Highlight[]
+  created_at       DateTime                 @default(now())
+  updated_at       DateTime                 @updatedAt
+}
+
+model Plan {
+  id                 String   @id @default(uuid())
+  name               String
+  plan_slug          String
+  price              Int
+  price_currency     String
+  price_start_date   DateTime
+  price_end_date     DateTime
+  is_expired         Boolean  @default(true)
+  subscriber         Account  @relation(fields: [subscriber_id], references: [id])
+  paddle_customer_id String?
+  subscriber_id      String   @unique
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+}
+
+model Subscriptions {
+  id              String                   @id @default(uuid())
+  source_email    String
+  source_name     String?
+  platform_domain String
+  source_avatar   String?
+  subscribers     AccountOnSubscriptions[]
+  created_at      DateTime                 @default(now())
+  updated_at      DateTime                 @updatedAt
+}
+
+model AccountOnSubscriptions {
+  account         Account       @relation(fields: [account_id], references: [id])
+  account_id      String
+  subscription    Subscriptions @relation(fields: [subscription_id], references: [id])
+  subscription_id String
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  @@id([account_id, subscription_id])
+}
+
+model Feed {
+  id              String      @id @default(uuid())
+  title           String
+  feed_hosted_url String
+  is_read         Boolean
+  is_hidden       Boolean
+  category        Category?   @relation(fields: [category_id], references: [id])
+  category_id     String?
+  account         Account?    @relation(fields: [account_id], references: [id])
+  account_id      String?
+  higlights       Highlight[]
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+}
+
+model Category {
+  id         String   @id @default(uuid())
+  account    Account  @relation(fields: [account_id], references: [id])
+  account_id String
+  feed       Feed[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Highlight {
+  id String @id @default(uuid())
+
+  feed           Feed     @relation(fields: [feed_id], references: [id])
+  feed_id        String
+  highlight_text String
+  highlight_html String
+  account        Account  @relation(fields: [account_id], references: [id])
+  account_id     String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+}

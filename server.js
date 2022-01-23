@@ -4,20 +4,33 @@ import morgan from "morgan";
 import { graphqlHTTP } from "express-graphql";
 import Playground from "graphql-playground-middleware-express";
 import { schema } from "./graphql";
+import authChecker from "./middleware/auth";
 
 const app = express();
 
-app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 app.use(cors());
 
 app.use(express.json());
 
-app.use(
+app.get(
   "/graphql",
-  // authChecker,
+  authChecker,
   graphqlHTTP((req) => ({
-    schema,
+    schema: schema,
+    context: {
+      user: req.user,
+    },
+    graphiql: process.env.NODE_ENV === "development",
+  }))
+);
+
+app.post(
+  "/graphql",
+  authChecker,
+  graphqlHTTP((req) => ({
+    schema: schema,
     context: {
       user: req.user,
     },
@@ -27,8 +40,10 @@ app.use(
 
 app.get("/playground", Playground({ endpoint: "/graphql" }));
 
-app.listen(4000, (err) => {
+app.listen(5000, (err) => {
   if (err) console.error(err);
 
-  console.log(`Server is running on port: 4000`);
+  console.log(`Server is running on port: 5000`);
 });
+
+export default app;
