@@ -38,6 +38,13 @@ app.post(
   }))
 );
 
+app.post("/event/new-email", (req, res) => {
+  console.log(req.body);
+  res.send({
+    message: "Email event received",
+  });
+});
+
 app.get("/playground", Playground({ endpoint: "/graphql" }));
 
 app.listen(5000, (err) => {

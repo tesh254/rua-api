@@ -21,6 +21,7 @@
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
     "@prisma/client": "^3.8.1",
+    "aws-sdk": "^2.1062.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
