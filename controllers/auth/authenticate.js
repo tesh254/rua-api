@@ -15,6 +15,46 @@ export async function fetchAccount(user_id) {
   });
 }
 
+export async function checkUserName(username) {
+  const user = await prisma.account.findUnique({
+    where: {
+      username: username,
+    },
+  });
+
+  return user && user.id ? true : false;
+}
+
+export async function saveUser(data, has_pass) {
+  const { username } = data;
+
+  const clean_username = username.toLowerCase().replace(/\s/g, "");
+
+  const isExists = await checkUserName(clean_username);
+
+  if (isExists) {
+    throw new Error("Username already exists");
+  } else {
+    const hash = await hashPass(data.password);
+    const correctData = has_pass
+      ? {
+          ...data,
+          password: hash,
+        }
+      : data;
+
+    const newUser = await prisma.account.create({
+      data: {
+        ...correctData,
+        username: clean_username,
+        in_app_email: `${clean_username}${process.env.RUA_EMAIL_BASE_DOMAIN}`,
+      },
+    });
+
+    return newUser;
+  }
+}
+
 export async function fetchProfile(_, args, ctx) {
   const { user } = ctx;
 
@@ -25,7 +65,8 @@ export async function fetchProfile(_, args, ctx) {
   return {
     id: user.id,
     email: user.email,
-    name: user.name,
+    username: user.username,
+    in_app_email: user.in_app_email,
     is_expired: (user.plan && user.plan.is_expired) || true,
     plan_name: user.plan && user.plan.name,
     plan_slug: user.plan && user.plan.plan_slug,
@@ -55,14 +96,15 @@ export async function authenticateUser(_, { payload }) {
             user: {
               id: response.id,
               email: response.email,
-              name: response.name,
+              username: response.username,
+              in_app_email: response.in_app_email,
               is_expired: (response.plan && response.plan.is_expired) || true,
               plan_name: response.plan && response.plan.name,
               plan_slug: response.plan && response.plan.plan_slug,
             },
           };
         } else {
-          throw new Error("Invalid password");
+          throw new Error("Invalid email or password");
         }
       } else {
         return {
@@ -73,7 +115,8 @@ export async function authenticateUser(_, { payload }) {
           user: {
             id: response.id,
             email: response.email,
-            name: response.name,
+            username: response.username,
+            in_app_email: response.in_app_email,
             is_expired: (response.plan && response.plan.is_expired) || true,
             plan_name: response.plan && response.plan.name,
             plan_slug: response.plan && response.plan.plan_slug,
@@ -83,52 +126,57 @@ export async function authenticateUser(_, { payload }) {
     } else {
       if (payload.auth_type === "local" && payload.password) {
         const hashedPass = await hashPass(payload.password);
-        const newUser = await prisma.account.create({
-          data: {
-            email: payload.email,
-            password: hashedPass,
-            name: payload.name,
-            auth_type: payload.auth_type,
-          },
-        });
 
-        return {
-          token: encode({
-            id: newUser.id,
-            email: newUser.email,
-          }),
-          user: {
-            id: newUser.id,
-            email: newUser.email,
-            name: newUser.name,
-            is_expired: (newUser.plan && newUser.plan.is_expired) || true,
-            plan_name: newUser.plan && newUser.plan.name,
-            plan_slug: newUser.plan && newUser.plan.plan_slug,
-          },
+        const data = {
+          password: hashedPass,
+          ...payload,
         };
+
+        try {
+          const newUser = await saveUser(data, true);
+
+          console.log({ newUser });
+
+          return {
+            token: encode({
+              id: newUser.id,
+              email: newUser.email,
+            }),
+            user: {
+              id: newUser.id,
+              email: newUser.email,
+              username: newUser.username,
+              in_app_email: newUser.in_app_email,
+              is_expired: (newUser.plan && newUser.plan.is_expired) || true,
+              plan_name: newUser.plan && newUser.plan.name,
+              plan_slug: newUser.plan && newUser.plan.plan_slug,
+            },
+          };
+        } catch (error) {
+          throw new Error(error);
+        }
       } else {
-        const newUser = await prisma.account.create({
-          data: {
-            email: payload.email,
-            name: payload.name,
-            auth_type: payload.auth_type,
-          },
-        });
+        try {
+          const newUser = await saveUser(payload);
 
-        return {
-          token: encode({
-            id: newUser.id,
-            email: newUser.email,
-          }),
-          user: {
-            id: newUser.id,
-            email: newUser.email,
-            name: newUser.name,
-            is_expired: (newUser.plan && newUser.plan.is_expired) || true,
-            plan_name: newUser.plan && newUser.plan.name,
-            plan_slug: newUser.plan && newUser.plan.plan_slug,
-          },
-        };
+          return {
+            token: encode({
+              id: newUser.id,
+              email: newUser.email,
+            }),
+            user: {
+              id: newUser.id,
+              email: newUser.email,
+              username: newUser.username,
+              in_app_email: newUser.in_app_email,
+              is_expired: (newUser.plan && newUser.plan.is_expired) || true,
+              plan_name: newUser.plan && newUser.plan.name,
+              plan_slug: newUser.plan && newUser.plan.plan_slug,
+            },
+          };
+        } catch (error) {
+          throw new Error(error);
+        }
       }
     }
   } catch (error) {

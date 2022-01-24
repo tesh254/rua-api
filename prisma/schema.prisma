@@ -10,8 +10,8 @@ datasource db {
 model Account {
   id               String                   @id @default(uuid())
   email            String                   @unique
-  name             String?
-  name_slug        String?
+  username         String                   @unique
+  in_app_email     String
   account_avatar   String?
   auth_type        String
   password         String?
