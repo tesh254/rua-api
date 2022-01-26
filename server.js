@@ -8,6 +8,7 @@ import unzipper from "unzipper";
 import { schema } from "./graphql";
 import authChecker from "./middleware/auth";
 import eventsAPI from "./routes/events";
+import validatorAPI from './routes/validator';
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/event", eventsAPI);
+
+app.use('/check', validatorAPI);
 
 app.get(
   "/graphql",
