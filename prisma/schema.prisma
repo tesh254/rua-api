@@ -51,6 +51,8 @@ model Subscriptions {
   subscribers     AccountOnSubscriptions[]
   created_at      DateTime                 @default(now())
   updated_at      DateTime                 @updatedAt
+  category        Category?                @relation(fields: [category_id], references: [id])
+  category_id     String?
 }
 
 model AccountOnSubscriptions {
@@ -70,8 +72,6 @@ model Feed {
   feed_hosted_url String
   is_read         Boolean
   is_hidden       Boolean
-  category        Category?   @relation(fields: [category_id], references: [id])
-  category_id     String?
   account         Account?    @relation(fields: [account_id], references: [id])
   account_id      String?
   higlights       Highlight[]
@@ -80,12 +80,12 @@ model Feed {
 }
 
 model Category {
-  id         String   @id @default(uuid())
-  account    Account  @relation(fields: [account_id], references: [id])
-  account_id String
-  feed       Feed[]
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id            String          @id @default(uuid())
+  account       Account         @relation(fields: [account_id], references: [id])
+  account_id    String
+  subscriptions Subscriptions[]
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
 }
 
 model Highlight {

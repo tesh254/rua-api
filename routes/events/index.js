@@ -3,13 +3,11 @@ import { addHarakaEventToQueue } from "../../controllers/emails";
 
 const router = express.Router();
 
-router.post(`/new-email`, (req, res, next) => {
-  const payload = req.body;
-
-  addHarakaEventToQueue(payload)
+router.post("/new-email", async (req, res, next) => {  
+  addHarakaEventToQueue(req.body)
     .then(() => {
       res.status(200).json({
-        message: "Email event received",
+        message: "Email event received and is being processed",
       });
     })
     .catch(() => {

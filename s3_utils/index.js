@@ -116,7 +116,7 @@ export async function s3Reupload(folder, stored_file_name) {
       html: headers.get("from").html,
       text: headers.get("from").text,
     },
-    date: headers.get("date"),
+    date: headers.get("date").toString(),
     subject: headers.get("subject"),
     to: {
       value: headers.get("to").value,
@@ -139,21 +139,30 @@ export async function s3Reupload(folder, stored_file_name) {
       item.key !== "x-google-smtp-source"
   );
 
-  
+  let parsedHeaderLines = {};
+
+  // convert array of objects with key and value to object with key and value
+  newHeaderLines.forEach((item) => {
+    parsedHeaderLines[item.key] = item.line;
+  });
+
+  const newHTML = parsed.html.replace(/(?:\r\n|\r|\n)/g, "<br/>");
+  // const newText = parsed.text.replace(/(?:\r\n|\r|\n)/g, " ");
+
   const newParsed = {
-      ...parsed,
-      headers: newHeaders,
-      headerLines: newHeaderLines,
-    };
-    console.log(newParsed.headers.from.value)
-    console.log(newParsed.headers.to.value)
-    console.log(newParsed.headers['content-type'].params)
+    ...parsed,
+    headers: newHeaders,
+    headerLines: parsedHeaderLines,
+    date: parsed.date.toString(),
+    html: newHTML,
+  };
 
   const params = {
     Bucket: process.env.RUA_S3_EMAIL_STORAGE_BUCKET,
     Key: `${folder}/${s3_key}.json`,
-    Body: newParsed,
+    Body: JSON.stringify(newParsed),
     ContentType: "application/json",
+    ACL: "public-read",
   };
 
   initAws();
@@ -162,5 +171,8 @@ export async function s3Reupload(folder, stored_file_name) {
 
   const uploadResult = await s3.upload(params).promise();
 
-  return uploadResult;
+  return {
+    s3_data: uploadResult,
+    parsed_email: newParsed,
+  };
 }
