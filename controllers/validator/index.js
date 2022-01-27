@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function checkIfEmailExist(_email) {
+    console.log(_email);
     const account = await prisma.account.findFirst({
         where: {
             in_app_email: _email,

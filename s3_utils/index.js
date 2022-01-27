@@ -32,7 +32,7 @@ export const emailFileToString = (file) => {
     fs.readFile(`./tmp/${file}`, "utf-8", function (err, data) {
       if (err) reject(err);
 
-      resolve(data.toString());
+      resolve(data && data.toString());
     });
   });
 };
@@ -102,10 +102,11 @@ export async function s3CleanUp(s3_key) {
 }
 
 export async function s3Reupload(folder, stored_file_name) {
-  console.log({ stored_file_name });
   const s3_key = stored_file_name.split(".")[0];
 
   let parsed = await parseEmailFromFile(stored_file_name);
+
+  console.log(parsed)
 
   const headers = parsed.headers;
 

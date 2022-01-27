@@ -15,7 +15,15 @@ export default async function authChecker(req, res, next) {
       next();
     }
   } else {
-      req.user = null;
-      next();
+    req.user = null;
+    next();
   }
+}
+
+export function protectQuery(_, args, context, childMethod, ...rest) {
+  if (!context.user) {
+    throw new Error("You are not logged in");
+  }
+
+  return childMethod(_, args, context, ...rest);
 }

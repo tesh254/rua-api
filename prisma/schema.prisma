@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -49,6 +50,7 @@ model Subscriptions {
   platform_domain String
   source_avatar   String?
   subscribers     AccountOnSubscriptions[]
+  feed            Feed[]
   created_at      DateTime                 @default(now())
   updated_at      DateTime                 @updatedAt
   category        Category?                @relation(fields: [category_id], references: [id])
@@ -67,16 +69,18 @@ model AccountOnSubscriptions {
 }
 
 model Feed {
-  id              String      @id @default(uuid())
+  id              String         @id @default(uuid())
   title           String
   feed_hosted_url String
   is_read         Boolean
   is_hidden       Boolean
-  account         Account?    @relation(fields: [account_id], references: [id])
+  account         Account?       @relation(fields: [account_id], references: [id])
   account_id      String?
   higlights       Highlight[]
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
+  subscription    Subscriptions? @relation(fields: [subscription_id], references: [id])
+  subscription_id String?
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
 }
 
 model Category {

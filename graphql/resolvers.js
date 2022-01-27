@@ -2,14 +2,49 @@ import {
   authenticateUser,
   fetchProfile,
 } from "../controllers/auth/authenticate";
+import {
+  getFeedCursorType,
+  getFeedCursorTypeWithFilters,
+  getFeedDefaultType,
+  getFeedDefaultTypeWithFilter,
+  searchFeedSubject,
+} from "../controllers/feed";
+import { protectQuery } from "../middleware/auth";
 
 const resolvers = {
-    Query: {
-        profile: fetchProfile
+  Query: {
+    profile: fetchProfile,
+    feed_default: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, getFeedDefaultType, ...rest);
     },
-    Mutation: {
-        authenticateUser: authenticateUser
-    }
-}
+    feed_cursor: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, getFeedCursorType, ...rest);
+    },
+    feed_cursor_filter: async (_, args, ctx, ...rest) => {
+      return await protectQuery(
+        _,
+        args,
+        ctx,
+        getFeedCursorTypeWithFilters,
+        ...rest
+      );
+    },
+    feed_default_filter: async (_, args, ctx, ...rest) => {
+      return await protectQuery(
+        _,
+        args,
+        ctx,
+        getFeedDefaultTypeWithFilter,
+        ...rest
+      );
+    },
+    feed_search: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, searchFeedSubject, ...rest);
+    },
+  },
+  Mutation: {
+    authenticateUser: authenticateUser,
+  },
+};
 
 export default resolvers;

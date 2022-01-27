@@ -22,6 +22,15 @@ app.use("/event", eventsAPI);
 
 app.use('/check', validatorAPI);
 
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  console.log(err)
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
+
 app.get(
   "/graphql",
   authChecker,
@@ -45,6 +54,8 @@ app.post(
     graphiql: process.env.NODE_ENV === "development",
   }))
 );
+
+
 
 app.get("/playground", Playground({ endpoint: "/graphql" }));
 
