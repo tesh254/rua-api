@@ -38,7 +38,7 @@ const type_defs = `
 
     input FilterItemInput {
         key: String
-        value: String
+        value: Boolean
     }
 
     type FeedItem {
@@ -54,7 +54,7 @@ const type_defs = `
 
     type FilterItem {
         key: String
-        value: String
+        value: Boolean
     }
 
     type FeedResponse {
@@ -73,7 +73,7 @@ const type_defs = `
         feed_default_filter(limit: Int!, order: String!, page: Int!, filters: [FilterItemInput]): FeedResponse
         feed_cursor(limit: Int!, cursor: String, jump: Int!, order: String!): FeedResponse
         feed_cursor_filter(limit: Int!, cursor: String, jump: Int!, order: String!, filters: [FilterItemInput]): FeedResponse
-        feed_search(limit: Int!, query: String!, order: String!, cursor: String): FeedResponse
+        feed_search(limit: Int!, query: String!, order: String!, cursor: String, jump: Int!): FeedResponse
     }
 `;
 

@@ -231,7 +231,7 @@ export async function getFeedCursorTypeWithFilters(
 
   const last_feed_item = feed[feed.length - 1];
 
-  const new_cursor = last_feed_item.id;
+  const new_cursor = last_feed_item && last_feed_item.id ? last_feed_item.id : null;
 
   return {
     limit,

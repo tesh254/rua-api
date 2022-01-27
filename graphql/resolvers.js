@@ -1,3 +1,4 @@
+import { GraphQLScalarType } from "graphql";
 import {
   authenticateUser,
   fetchProfile,
@@ -45,6 +46,19 @@ const resolvers = {
   Mutation: {
     authenticateUser: authenticateUser,
   },
+  // Any: new GraphQLScalarType({
+  //   name: "Any",
+  //   description: "Literally anything",
+  //   serialize(value) {
+  //     return value;
+  //   },
+  //   parseValue(value) {
+  //     return value;
+  //   },
+  //   parseLiteral(ast) {
+  //     return ast.value;
+  //   },
+  // }),
 };
 
 export default resolvers;
