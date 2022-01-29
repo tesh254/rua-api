@@ -9,7 +9,19 @@ import {
   getFeedDefaultType,
   getFeedDefaultTypeWithFilter,
   searchFeedSubject,
+  markFeedItemAsHidden,
+  markFeedItemAsRead,
+  deleteFeedItem,
 } from "../controllers/feed";
+import {
+  getCategories,
+  getCreatorsByCategory,
+  getCreatorCount,
+  createCategory,
+  assignCreatorToCategory,
+  updateCategory,
+  deleteCategory,
+} from "../controllers/category";
 import { protectQuery } from "../middleware/auth";
 
 const resolvers = {
@@ -42,23 +54,40 @@ const resolvers = {
     feed_search: async (_, args, ctx, ...rest) => {
       return await protectQuery(_, args, ctx, searchFeedSubject, ...rest);
     },
+    group: async (_, args, ctx, ...rest) => {
+      return await getCategories(_, args, ctx, getCategories, ...rest);
+    },
+    creators: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, getCreatorsByCategory, ...rest);
+    },
+    stats: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, getCreatorCount, ...rest);
+    },
   },
   Mutation: {
     authenticateUser: authenticateUser,
+    markFeedItemAsHidden: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, markFeedItemAsHidden, ...rest);
+    },
+    markFeedItemAsRead: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, markFeedItemAsRead, ...rest);
+    },
+    deleteFeedItem: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, deleteFeedItem, ...rest);
+    },
+    deleteCategory: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, deleteCategory, ...rest);
+    },
+    updateCategory: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, updateCategory, ...rest);
+    },
+    assignCreatorToCategory: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, assignCreatorToCategory, ...rest);
+    },
+    createCategory: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, createCategory, ...rest);
+    },
   },
-  // Any: new GraphQLScalarType({
-  //   name: "Any",
-  //   description: "Literally anything",
-  //   serialize(value) {
-  //     return value;
-  //   },
-  //   parseValue(value) {
-  //     return value;
-  //   },
-  //   parseLiteral(ast) {
-  //     return ast.value;
-  //   },
-  // }),
 };
 
 export default resolvers;

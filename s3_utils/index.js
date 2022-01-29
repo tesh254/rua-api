@@ -2,6 +2,7 @@ import AWS from "aws-sdk";
 import fs from "fs";
 import { simpleParser } from "mailparser";
 import zlib from "zlib";
+import { parse } from 'node-html-parser';
 
 export function initAws() {
   AWS.config.update({
@@ -147,7 +148,7 @@ export async function s3Reupload(folder, stored_file_name) {
     parsedHeaderLines[item.key] = item.line;
   });
 
-  const newHTML = parsed.html.replace(/(?:\r\n|\r|\n)/g, "<br/>");
+  const newHTML = parse(parsed.html).toString();
   // const newText = parsed.text.replace(/(?:\r\n|\r|\n)/g, " ");
 
   const newParsed = {

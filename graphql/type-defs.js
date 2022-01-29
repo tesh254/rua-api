@@ -7,6 +7,11 @@ const type_defs = `
         auth_type: String!
     }
 
+    input TogglePayload {
+        feed_id: String
+        current_status: Boolean
+    }
+
     type User {
         id: String
         email: String
@@ -22,8 +27,21 @@ const type_defs = `
         user: User!
     }
 
+    type AssignmentResponse {
+        is_done: Boolean
+    }
+
     type Mutation {
         authenticateUser(payload: AuthPayload!): AuthResponse
+
+        markFeedItemAsHidden(feed_id: String, current_status: Boolean): FeedItem
+        markFeedItemAsRead(feed_id: String, current_status: Boolean): FeedItem
+        deleteFeedItem(feed_id: String): FeedItem
+
+        createCategory(name: String): CategoryItem
+        assignCreatorToCategory(creator_id: String, category_id: String): AssignmentResponse
+        updateCategory(category_id: String): CategoryItem
+        deleteCategory(category_id: String): CategoryItem 
     }
 
     type Subscription {
@@ -67,13 +85,53 @@ const type_defs = `
         filters: [FilterItem]
     }
 
+    type CategoryItem {
+        id: String
+        name: String
+        name_slug: String
+        created_at: String
+        updated_at: String
+    }
+
+    type CreatorItem {
+        id: String
+        source_email: String
+        source_name: String
+        platform_domain: String
+        source_avatar: String
+        created_at: String
+        updated_at: String
+    }
+
+    type CreatorCategoryResponse {
+        id: String
+        account: User
+        subscription: CreatorItem
+        category: CategoryItem
+        created_at: String
+        updated_at: String
+        category_id: String
+        subscription_id: String
+        account_id: String
+    }
+
+    type Stats {
+        total_subs: Int
+    }
+
     type Query {
         profile: User
+
         feed_default(limit: Int!, order: String!, page: Int!): FeedResponse
         feed_default_filter(limit: Int!, order: String!, page: Int!, filters: [FilterItemInput]): FeedResponse
         feed_cursor(limit: Int!, cursor: String, jump: Int!, order: String!): FeedResponse
         feed_cursor_filter(limit: Int!, cursor: String, jump: Int!, order: String!, filters: [FilterItemInput]): FeedResponse
         feed_search(limit: Int!, query: String!, order: String!, cursor: String, jump: Int!): FeedResponse
+        
+        group: [CategoryItem]
+        creators(category_id: String): [CreatorCategoryResponse]
+        stats: Stats
+
     }
 `;
 

@@ -1,6 +1,108 @@
 import { PrismaClient } from "@prisma/client";
+import { EmailDeleteQueue as deleteS3FileQueue } from "../../bullmq/config";
 
 const prisma = new PrismaClient();
+
+export async function deleteFeedItem(_, { feed_id }, { user }) {
+  const feed = await prisma.feed.findFirst({
+    where: {
+      AND: [
+        {
+          id: feed_id,
+        },
+        {
+          account_id: user.id,
+        },
+      ],
+    },
+  });
+
+  const prev_feed = {
+    ...feed,
+  };
+
+  const host_url = feed.feed_hosted_url;
+
+  await deleteS3FileQueue.add("delete-s3-file", {
+    host_url,
+  });
+
+  await prisma.feed.delete({
+    where: {
+      id: feed_id,
+    },
+  });
+
+  return prev_feed;
+}
+
+export async function markFeedItemAsRead(
+  _,
+  { feed_id, current_status },
+  { user }
+) {
+  const feed = await prisma.feed.findFirst({
+    where: {
+      AND: [
+        {
+          id: feed_id,
+        },
+        {
+          account_id: user.id,
+        },
+      ],
+    },
+  });
+
+  if (!feed) {
+    throw new Error("Issue does not exists");
+  } else {
+    const update_feed = await prisma.feed.update({
+      where: {
+        id: feed_id,
+      },
+      data: {
+        is_read: !current_status,
+      },
+    });
+
+    return update_feed;
+  }
+}
+
+export async function markFeedItemAsHidden(
+  _,
+  { feed_id, current_status },
+  { user }
+) {
+  const feed = await prisma.feed.findFirst({
+    where: {
+      AND: [
+        {
+          id: feed_id,
+        },
+        {
+          account_id: user.id,
+        },
+      ],
+    },
+  });
+
+  if (!feed) {
+    throw new Error("Issue not found");
+  } else {
+    const update_feed = await prisma.feed.update({
+      where: {
+        id: feed_id,
+      },
+      data: {
+        is_hidden: !current_status,
+      },
+    });
+
+    return update_feed;
+  }
+}
 
 export async function getFeedDefaultType(_, { limit, order, page }, { user }) {
   const feed_count = await prisma.feed.count({
@@ -9,7 +111,12 @@ export async function getFeedDefaultType(_, { limit, order, page }, { user }) {
     },
   });
 
-  const total_pages = feed_count / limit;
+  console.log(feed_count);
+
+  const total_pages =
+    parseInt(Math.round(feed_count / limit), 10) < 1
+      ? 1
+      : parseInt(Math.round(feed_count / limit), 10);
 
   const jump = page > 1 ? (page - 1) * limit : 0;
 
@@ -66,7 +173,10 @@ export async function getFeedDefaultTypeWithFilter(
           account_id: user.id,
         };
 
-  const total_pages = feed_count / limit;
+  const total_pages =
+    parseInt(Math.round(feed_count / limit), 10) < 1
+      ? 1
+      : parseInt(Math.round(feed_count / limit), 10);
 
   const jump = page > 1 ? (page - 1) * limit : 0;
 
@@ -87,7 +197,7 @@ export async function getFeedDefaultTypeWithFilter(
     total_pages,
     current_page: page,
     feed,
-    filters
+    filters,
   };
 }
 
@@ -231,13 +341,14 @@ export async function getFeedCursorTypeWithFilters(
 
   const last_feed_item = feed[feed.length - 1];
 
-  const new_cursor = last_feed_item && last_feed_item.id ? last_feed_item.id : null;
+  const new_cursor =
+    last_feed_item && last_feed_item.id ? last_feed_item.id : null;
 
   return {
     limit,
     cursor: new_cursor,
     order,
     feed,
-    filters
+    filters,
   };
 }

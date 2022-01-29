@@ -53,19 +53,18 @@ model Subscriptions {
   feed            Feed[]
   created_at      DateTime                 @default(now())
   updated_at      DateTime                 @updatedAt
-  category        Category?                @relation(fields: [category_id], references: [id])
-  category_id     String?
 }
 
 model AccountOnSubscriptions {
+  id              String        @id @default(uuid())
   account         Account       @relation(fields: [account_id], references: [id])
   account_id      String
   subscription    Subscriptions @relation(fields: [subscription_id], references: [id])
   subscription_id String
+  category        Category?     @relation(fields: [category_id], references: [id])
+  category_id     String?
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
-
-  @@id([account_id, subscription_id])
 }
 
 model Feed {
@@ -84,12 +83,14 @@ model Feed {
 }
 
 model Category {
-  id            String          @id @default(uuid())
-  account       Account         @relation(fields: [account_id], references: [id])
-  account_id    String
-  subscriptions Subscriptions[]
-  created_at    DateTime        @default(now())
-  updated_at    DateTime        @updatedAt
+  id           String                   @id @default(uuid())
+  name         String
+  name_slug    String
+  account      Account                  @relation(fields: [account_id], references: [id])
+  account_id   String
+  account_subs AccountOnSubscriptions[]
+  created_at   DateTime                 @default(now())
+  updated_at   DateTime                 @updatedAt
 }
 
 model Highlight {

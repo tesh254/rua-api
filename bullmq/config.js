@@ -18,11 +18,40 @@ export const connection = new IORedis({
   enableReadyCheck: false,
 });
 
+const prisma = new PrismaClient();
+
 export const EmailQueue = new Queue("email-queue", { connection });
+
+export const EmailDeleteQueue = new Queue("email-delete-queue", { connection });
 
 export const EmailQueueEvents = new QueueEvents("email-queue", { connection });
 
-const prisma = new PrismaClient();
+export const EmailDeleteWorker = new Worker(
+  "email-delete-queue",
+  async (job) => {
+    console.log("Handling job: ", job.id);
+
+    const {
+      data: { host_url },
+    } = job;
+
+    try {
+      const [protocol, _, domain, folder, file_name] = host_url.split("/");
+
+      await s3CleanUp(`${folder}/${file_name}`);
+
+      return {
+        status: "success",
+        file: {
+          source: `${protocol}://${domain}/${folder}/${file_name}`,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  },
+  { connection }
+);
 
 export const EmailWorker = new Worker(
   "email-queue",
@@ -40,7 +69,7 @@ export const EmailWorker = new Worker(
       });
 
       const file_name = `${s3_key.split("/")[1].split(".")[0]}.txt`;
-      
+
       if (account && account.id) {
         await streamToFile(s3_key, file_name);
 
@@ -137,6 +166,19 @@ EmailWorker.on("completed", (job, result) => {
 });
 
 EmailWorker.on("failed", (job, err) => {
+  console.log(err);
+  console.log(`Job ${job.id} failed with error ${err.message}`);
+});
+
+EmailDeleteWorker.on("progress", (job, progress) => {
+  console.log(`Job ${job.id} is ${progress}% done`);
+});
+
+EmailDeleteWorker.on("completed", (job, result) => {
+  console.log(`Job ${job.id} completed with result ${result.message}`);
+});
+
+EmailDeleteWorker.on("failed", (job, err) => {
   console.log(err);
   console.log(`Job ${job.id} failed with error ${err.message}`);
 });
