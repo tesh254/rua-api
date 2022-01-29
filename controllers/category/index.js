@@ -63,7 +63,7 @@ export async function createCategory(_, { name }, { user }) {
     data: {
       account_id: user.id,
       name,
-      name_slug: slugify(name) + generateRandomInteger(9999),
+      name_slug: slugify(name) + "-" + generateRandomInteger(9999),
     },
   });
 
@@ -91,18 +91,21 @@ export async function assignCreatorToCategory(
   if (!creator) {
     throw new Error("Subscription does not exist");
   } else {
-    await prisma.accountOnSubscriptions.update({
+    const newData = await prisma.accountOnSubscriptions.update({
       where: {
         id: creator.id,
       },
       data: {
         category_id,
       },
+      include: {
+        account: true,
+        subscription: true,
+        category: true
+      }
     });
 
-    return {
-      is_done: true,
-    };
+    return newData;
   }
 }
 

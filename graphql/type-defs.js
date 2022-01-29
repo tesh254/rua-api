@@ -39,9 +39,9 @@ const type_defs = `
         deleteFeedItem(feed_id: String): FeedItem
 
         createCategory(name: String): CategoryItem
-        assignCreatorToCategory(creator_id: String, category_id: String): AssignmentResponse
-        updateCategory(category_id: String): CategoryItem
-        deleteCategory(category_id: String): CategoryItem 
+        assignCreatorToCategory(creator_id: String!, category_id: String!): CreatorCategoryResponse
+        updateCategory(category_id: String!): CategoryItem
+        deleteCategory(category_id: String!): CategoryItem 
     }
 
     type Subscription {
