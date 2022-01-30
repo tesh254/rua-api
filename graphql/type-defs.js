@@ -31,19 +31,6 @@ const type_defs = `
         is_done: Boolean
     }
 
-    type Mutation {
-        authenticateUser(payload: AuthPayload!): AuthResponse
-
-        markFeedItemAsHidden(feed_id: String, current_status: Boolean): FeedItem
-        markFeedItemAsRead(feed_id: String, current_status: Boolean): FeedItem
-        deleteFeedItem(feed_id: String): FeedItem
-
-        createCategory(name: String): CategoryItem
-        assignCreatorToCategory(creator_id: String!, category_id: String!): CreatorCategoryResponse
-        updateCategory(category_id: String!): CategoryItem
-        deleteCategory(category_id: String!): CategoryItem 
-    }
-
     type Subscription {
         id: String
         source_email: String
@@ -132,6 +119,19 @@ const type_defs = `
         creators(category_id: String): [CreatorCategoryResponse]
         stats: Stats
 
+    }
+
+    type Mutation {
+        authenticateUser(payload: AuthPayload!): AuthResponse
+
+        markFeedItemAsHidden(feed_id: String, current_status: Boolean): FeedItem
+        markFeedItemAsRead(feed_id: String, current_status: Boolean): FeedItem
+        deleteFeedItem(feed_id: String): FeedItem
+
+        createCategory(name: String): CategoryItem
+        assignCreatorToCategory(creator_id: String!, category_id: String!): CreatorCategoryResponse
+        updateCategory(category_id: String!, name: String!): CategoryItem
+        deleteCategory(category_id: String!): CategoryItem 
     }
 `;
 

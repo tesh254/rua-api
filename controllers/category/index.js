@@ -101,15 +101,15 @@ export async function assignCreatorToCategory(
       include: {
         account: true,
         subscription: true,
-        category: true
-      }
+        category: true,
+      },
     });
 
     return newData;
   }
 }
 
-export async function updateCategory(_, { category_id }, { user }) {
+export async function updateCategory(_, { category_id, name }, { user }) {
   const category = await prisma.category.findFirst({
     where: {
       AND: [
@@ -134,6 +134,10 @@ export async function updateCategory(_, { category_id }, { user }) {
   const new_category = await prisma.category.update({
     where: {
       id: past_category.id,
+    },
+    data: {
+      name,
+      name_slug: slugify(name) + "-" + generateRandomInteger(9999),
     },
   });
 
@@ -168,14 +172,29 @@ export async function deleteCategory(_, { category_id }, { user }) {
     },
   });
 
-  await prisma.accountOnSubscriptions.update({
+  const link = await prisma.accountOnSubscriptions.findFirst({
     where: {
-      category_id: past_category.id,
-    },
-    data: {
-      category_id: null,
-    },
-  });
+      AND: [
+        {
+          category_id: past_category.id,
+        },
+        {
+          account_id: user.id
+        }
+      ]
+    }
+  })
+
+  if (link) {
+    await prisma.accountOnSubscriptions.update({
+      where: {
+        id: link.id,
+      },
+      data: {
+        category_id: null,
+      },
+    });
+  }
 
   return past_category;
 }
