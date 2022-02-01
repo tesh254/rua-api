@@ -1,6 +1,7 @@
 import { GraphQLScalarType } from "graphql";
 import {
   authenticateUser,
+  checkEmail,
   fetchProfile,
 } from "../controllers/auth/authenticate";
 import {
@@ -22,11 +23,14 @@ import {
   updateCategory,
   deleteCategory,
 } from "../controllers/category";
+import { checkUserName } from "../controllers/auth/authenticate";
 import { protectQuery } from "../middleware/auth";
 
 const resolvers = {
   Query: {
     profile: fetchProfile,
+    is_claimed: async (...args) => checkUserName(...args),
+    has_account: async (...args) => checkEmail(...args),
     feed_default: async (_, args, ctx, ...rest) => {
       return await protectQuery(_, args, ctx, getFeedDefaultType, ...rest);
     },

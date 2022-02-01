@@ -15,7 +15,7 @@ export async function fetchAccount(user_id) {
   });
 }
 
-export async function checkUserName(username) {
+export async function checkUserName(_, { username }) {
   const user = await prisma.account.findUnique({
     where: {
       username: username,
@@ -25,12 +25,18 @@ export async function checkUserName(username) {
   return user && user.id ? true : false;
 }
 
+export async function checkEmail(_, { email }) {
+  const user = await prisma.account.findUnique({ where: { email: email } });
+
+  return user && user.id ? true : false;
+}
+
 export async function saveUser(data, has_pass) {
   const { username } = data;
 
   const clean_username = username.toLowerCase().replace(/\s/g, "");
 
-  const isExists = await checkUserName(clean_username);
+  const isExists = await checkUserName(null, { clean_username });
 
   if (isExists) {
     throw new Error("Username already exists");

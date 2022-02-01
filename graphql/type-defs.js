@@ -108,7 +108,8 @@ const type_defs = `
 
     type Query {
         profile: User
-
+        is_claimed(username: String!): Boolean
+        has_account(email: String!): Boolean
         feed_default(limit: Int!, order: String!, page: Int!): FeedResponse
         feed_default_filter(limit: Int!, order: String!, page: Int!, filters: [FilterItemInput]): FeedResponse
         feed_cursor(limit: Int!, cursor: String, jump: Int!, order: String!): FeedResponse
