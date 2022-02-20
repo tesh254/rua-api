@@ -4,8 +4,8 @@
   "description": "Rua backend API",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec node index.js",
-    "start": "node ."
+    "dev": "nodemon --exec esr index.js",
+    "start": "esr ."
   },
   "repository": {
     "type": "git",
@@ -20,13 +20,14 @@
   "homepage": "https://github.com/tesh254/rua-api#readme",
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
-    "@prisma/client": "^3.8.1",
+    "@prisma/client": "^3.9.2",
     "aws-sdk": "^2.1062.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "bullmq": "^1.66.0",
     "cors": "^2.8.5",
     "dotenv": "^12.0.4",
+    "esbuild-runner": "^2.2.1",
     "esm": "^3.2.25",
     "express": "^4.17.2",
     "express-graphql": "^0.12.0",
@@ -43,6 +44,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "prisma": "^3.8.1"
+    "prisma": "^3.9.2"
   }
 }

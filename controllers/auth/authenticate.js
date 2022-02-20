@@ -5,7 +5,7 @@ import { checkPass, hashPass } from "../../helpers/password";
 const prisma = new PrismaClient();
 
 export async function fetchAccount(user_id) {
-  return await prisma.account.findUnique({
+  return await prisma.account.findFirst({
     where: {
       id: user_id,
     },
@@ -16,7 +16,7 @@ export async function fetchAccount(user_id) {
 }
 
 export async function checkUserName(_, { username }) {
-  const user = await prisma.account.findUnique({
+  const user = await prisma.account.findFirst({
     where: {
       username: username,
     },
@@ -26,7 +26,7 @@ export async function checkUserName(_, { username }) {
 }
 
 export async function checkEmail(_, { email }) {
-  const user = await prisma.account.findUnique({ where: { email: email } });
+  const user = await prisma.account.findFirst({ where: { email: email } });
 
   return user && user.id ? true : false;
 }
@@ -140,8 +140,6 @@ export async function authenticateUser(_, { payload }) {
 
         try {
           const newUser = await saveUser(data, true);
-
-          console.log({ newUser });
 
           return {
             token: encode({

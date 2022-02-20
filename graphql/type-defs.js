@@ -3,7 +3,7 @@ const type_defs = `
         email: String!
         username: String
         password: String
-        user_avatar: String
+        account_avatar: String
         auth_type: String!
     }
 

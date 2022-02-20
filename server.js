@@ -3,12 +3,15 @@ import cors from "cors";
 import morgan from "morgan";
 import { graphqlHTTP } from "express-graphql";
 import Playground from "graphql-playground-middleware-express";
+import dotenv from 'dotenv';
 import AWS from "aws-sdk";
 import unzipper from "unzipper";
 import { schema } from "./graphql";
 import authChecker from "./middleware/auth";
 import eventsAPI from "./routes/events";
 import validatorAPI from './routes/validator';
+
+dotenv.config();
 
 const app = express();
 
@@ -55,14 +58,14 @@ app.post(
   }))
 );
 
-
+app.set('PORT', process.env.PORT || 5555);
 
 app.get("/playground", Playground({ endpoint: "/graphql" }));
 
-app.listen(5000, (err) => {
+app.listen(app.get('PORT'), (err) => {
   if (err) console.error(err);
 
-  console.log(`Server is running on port: 5000`);
+  console.log(`Server is running on port: ${app.get('PORT')}`);
 });
 
 export default app;
