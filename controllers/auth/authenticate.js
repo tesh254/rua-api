@@ -76,6 +76,7 @@ export async function fetchProfile(_, args, ctx) {
     is_expired: (user.plan && user.plan.is_expired) || true,
     plan_name: user.plan && user.plan.name,
     plan_slug: user.plan && user.plan.plan_slug,
+    is_onboarded: user.is_onboarded
   };
 }
 
@@ -107,6 +108,7 @@ export async function authenticateUser(_, { payload }) {
               is_expired: (response.plan && response.plan.is_expired) || true,
               plan_name: response.plan && response.plan.name,
               plan_slug: response.plan && response.plan.plan_slug,
+              is_onboarded: response.is_onboarded
             },
           };
         } else {
@@ -126,6 +128,7 @@ export async function authenticateUser(_, { payload }) {
             is_expired: (response.plan && response.plan.is_expired) || true,
             plan_name: response.plan && response.plan.name,
             plan_slug: response.plan && response.plan.plan_slug,
+            is_onboarded: response.is_onboarded
           },
         };
       }
@@ -154,6 +157,7 @@ export async function authenticateUser(_, { payload }) {
               is_expired: (newUser.plan && newUser.plan.is_expired) || true,
               plan_name: newUser.plan && newUser.plan.name,
               plan_slug: newUser.plan && newUser.plan.plan_slug,
+              is_onboarded: response.is_onboarded
             },
           };
         } catch (error) {
@@ -176,6 +180,7 @@ export async function authenticateUser(_, { payload }) {
               is_expired: (newUser.plan && newUser.plan.is_expired) || true,
               plan_name: newUser.plan && newUser.plan.name,
               plan_slug: newUser.plan && newUser.plan.plan_slug,
+              is_onboarded: response.is_onboarded
             },
           };
         } catch (error) {

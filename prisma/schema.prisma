@@ -17,6 +17,7 @@ model Account {
   auth_type        String
   password         String?
   last_logged_in   String?
+  is_onboarded     Boolean?                 @default(false)
   has_accepted_tos Boolean                  @default(true)
   plan             Plan?
   subscriptions    AccountOnSubscriptions[]

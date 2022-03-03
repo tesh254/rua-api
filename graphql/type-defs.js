@@ -20,6 +20,7 @@ const type_defs = `
         is_expired: Boolean
         plan_name: String
         plan_slug: String
+        is_onboarded: Boolean
     }
 
     type AuthResponse {
