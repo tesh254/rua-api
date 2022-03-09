@@ -29,19 +29,32 @@ model Account {
 }
 
 model Plan {
-  id                 String   @id @default(uuid())
-  name               String
-  plan_slug          String
-  price              Int
-  price_currency     String
-  price_start_date   DateTime
-  price_end_date     DateTime
-  is_expired         Boolean  @default(true)
-  subscriber         Account  @relation(fields: [subscriber_id], references: [id])
-  paddle_customer_id String?
-  subscriber_id      String   @unique
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  id                             String   @id @default(uuid())
+  name                           String
+  plan_slug                      String
+  price                          Float
+  price_currency                 String
+  price_start_date               String?
+  price_end_date                 String?
+  is_expired                     Boolean  @default(true)
+  subscriber                     Account  @relation(fields: [subscriber_id], references: [id])
+  paddle_customer_id             String?
+  cancel_url                     String?
+  checkout_id                    String?
+  last_event_time                String?
+  paddle_plan_id                 String?
+  unit_price                     Float?
+  update_payment_url             String?
+  paddle_user_id                 String?
+  transaction_status             String?
+  next_bill_date                 String?
+  last_receipt_url               String?
+  paddle_subscription_payment_id String?
+  plan_status                    String?
+  receipt_url                    String?
+  subscriber_id                  String   @unique
+  created_at                     DateTime @default(now())
+  updated_at                     DateTime @updatedAt
 }
 
 model Subscriptions {

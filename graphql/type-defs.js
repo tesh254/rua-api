@@ -7,6 +7,52 @@ const type_defs = `
         auth_type: String!
     }
 
+    input PaddleInput {
+        plan_name: String
+        sale_gross: String
+        currency: String
+        next_bill_date: String
+        subscription_id: String
+        receipt_url: String
+        status: String
+        event_time: String
+        checkout_id: String
+        earnings: String
+        alert_name: String
+    }
+
+    input PlanPayload {
+        email: String!
+        paddle: PaddleInput
+    }
+
+    type PlanResponse {
+        name: String
+        plan_slug: String
+        price: String
+        price_current: String
+        price_start_date: String
+        price_end_date: String
+        is_expired: Boolean
+        paddle_customer_id: String
+        cancel_url: String
+        checkout_id: String
+        last_event_time: String
+        paddle_plan_id: String
+        unit_price:String
+        update_payment_url: String
+        paddle_user_id: String
+        transaction_status: String
+        next_bill_date: String
+        last_receipt_url: String
+        paddle_subscription_payment_id: String
+        plan_status: String
+        receipt_url: String
+        subscriber_id: String
+        created_at: String
+        updated_at: String
+    }
+
     input TogglePayload {
         feed_id: String
         current_status: Boolean
@@ -125,6 +171,7 @@ const type_defs = `
 
     type Mutation {
         authenticateUser(payload: AuthPayload!): AuthResponse
+        plan(email: String, paddle: PaddleInput): PlanResponse
 
         markFeedItemAsHidden(feed_id: String, current_status: Boolean): FeedItem
         markFeedItemAsRead(feed_id: String, current_status: Boolean): FeedItem

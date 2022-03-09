@@ -14,6 +14,7 @@ import {
   markFeedItemAsRead,
   deleteFeedItem,
 } from "../controllers/feed";
+import { createPlan } from '../controllers/plan'
 import {
   getCategories,
   getCreatorsByCategory,
@@ -91,6 +92,7 @@ const resolvers = {
     createCategory: async (_, args, ctx, ...rest) => {
       return await protectQuery(_, args, ctx, createCategory, ...rest);
     },
+    plan: createPlan
   },
 };
 
