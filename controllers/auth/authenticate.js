@@ -108,7 +108,7 @@ export async function authenticateUser(_, { payload }) {
               is_expired: (response.plan && response.plan.is_expired) || true,
               plan_name: response.plan && response.plan.name,
               plan_slug: response.plan && response.plan.plan_slug,
-              is_onboarded: response.is_onboarded
+              is_onboarded: response.is_onboarded || false
             },
           };
         } else {
@@ -157,7 +157,7 @@ export async function authenticateUser(_, { payload }) {
               is_expired: (newUser.plan && newUser.plan.is_expired) || true,
               plan_name: newUser.plan && newUser.plan.name,
               plan_slug: newUser.plan && newUser.plan.plan_slug,
-              is_onboarded: response.is_onboarded
+              is_onboarded: newUser.is_onboarded
             },
           };
         } catch (error) {
@@ -180,7 +180,7 @@ export async function authenticateUser(_, { payload }) {
               is_expired: (newUser.plan && newUser.plan.is_expired) || true,
               plan_name: newUser.plan && newUser.plan.name,
               plan_slug: newUser.plan && newUser.plan.plan_slug,
-              is_onboarded: response.is_onboarded
+              is_onboarded: newUser.is_onboarded
             },
           };
         } catch (error) {
