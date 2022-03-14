@@ -53,7 +53,7 @@ export async function saveUser(data, has_pass) {
       data: {
         ...correctData,
         username: clean_username,
-        in_app_email: `${clean_username}${process.env.RUA_EMAIL_BASE_DOMAIN}`,
+        in_app_email: `${clean_username}@rua-mail.com`,
       },
     });
 
@@ -76,7 +76,7 @@ export async function fetchProfile(_, args, ctx) {
     is_expired: (user.plan && user.plan.is_expired) || true,
     plan_name: user.plan && user.plan.name,
     plan_slug: user.plan && user.plan.plan_slug,
-    is_onboarded: user.is_onboarded || false
+    is_onboarded: user?.is_onboarded
   };
 }
 
