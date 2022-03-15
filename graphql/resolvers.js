@@ -13,6 +13,7 @@ import {
   markFeedItemAsHidden,
   markFeedItemAsRead,
   deleteFeedItem,
+  getSingleFeed,
 } from "../controllers/feed";
 import { createPlan } from '../controllers/plan'
 import {
@@ -68,6 +69,9 @@ const resolvers = {
     stats: async (_, args, ctx, ...rest) => {
       return await protectQuery(_, args, ctx, getCreatorCount, ...rest);
     },
+    issue: async (_, args, ctx, ...rest) => {
+      return await protectQuery(_, args, ctx, getSingleFeed, ...rest);
+    }
   },
   Mutation: {
     authenticateUser: authenticateUser,

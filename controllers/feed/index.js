@@ -290,6 +290,90 @@ export async function getFeedCursorType(
   };
 }
 
+export async function getSingleFeed(_, { feed_id }, { user }) {
+  const feed = await prisma.feed.findFirst({
+    where: {
+      AND: [
+        {
+          account_id: user.id,
+        },
+        {
+          id: feed_id,
+        },
+      ],
+    },
+    include: {
+      subscription: true,
+    },
+  });
+
+  if (!feed) {
+    throw new Error("Cannot find the newsletter issue");
+  }
+
+  return feed;
+}
+
+export async function markIssueAsRead(_, { feed_id }, { user }) {
+  const feed = await prisma.feed.findFirst({
+    where: {
+      AND: [
+        {
+          account_id: user.id,
+        },
+        {
+          id: feed_id,
+        },
+      ],
+    },
+  });
+
+  if (feed) {
+    const updateFeed = await prisma.feed.update({
+      where: {
+        id: feed_id,
+      },
+      data: {
+        is_read: !feed.is_read,
+      },
+    });
+
+    return updateFeed;
+  } else {
+    throw new Error("Cannot find the newsletter issue");
+  }
+}
+
+export async function markIssueAsHidden(_, { feed_id }, { user }) {
+  const feed = await prisma.feed.findFirst({
+    where: {
+      AND: [
+        {
+          account_id: user.id,
+        },
+        {
+          id: feed_id,
+        },
+      ],
+    },
+  });
+
+  if (feed) {
+    const updateFeed = await prisma.feed.update({
+      where: {
+        id: feed_id,
+      },
+      data: {
+        is_hidden: !feed.is_hidden,
+      },
+    });
+
+    return updateFeed;
+  } else {
+    throw new Error("Cannot find the newsletter issue");``
+  }
+}
+
 export async function getFeedCursorTypeWithFilters(
   _,
   { limit, cursor, jump, order, filters },

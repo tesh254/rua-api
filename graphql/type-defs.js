@@ -119,6 +119,10 @@ const type_defs = `
         filters: [FilterItem]
     }
 
+    type IssueResponse {
+        issue: FeedItem
+    }
+
     type CategoryItem {
         id: String
         name: String
@@ -166,7 +170,7 @@ const type_defs = `
         group: [CategoryItem]
         creators(category_id: String): [CreatorCategoryResponse]
         stats: Stats
-
+        issue(feed_id: String!): FeedItem
     }
 
     type Mutation {
