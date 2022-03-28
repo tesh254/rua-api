@@ -22,7 +22,7 @@ export async function checkUserName(_, { username }) {
     },
   });
 
-  return user && user.id ? true : false;
+  return !!user;
 }
 
 export async function checkEmail(_, { email }) {
