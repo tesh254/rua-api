@@ -36,7 +36,7 @@ export async function saveUser(data, has_pass) {
 
   const clean_username = username.toLowerCase().replace(/\s/g, "");
 
-  const isExists = await checkUserName(null, { clean_username });
+  const isExists = await checkUserName(null, { username: clean_username });
 
   if (isExists) {
     throw new Error("Username already exists");
@@ -76,7 +76,7 @@ export async function fetchProfile(_, args, ctx) {
     is_expired: (user.plan && user.plan.is_expired) || true,
     plan_name: user.plan && user.plan.name,
     plan_slug: user.plan && user.plan.plan_slug,
-    is_onboarded: user?.is_onboarded
+    is_onboarded: user?.is_onboarded,
   };
 }
 
@@ -88,108 +88,43 @@ export async function authenticateUser(_, { payload }) {
       },
     });
 
-    if (response) {
-      if (payload.auth_type === "local" && payload.password) {
-        const passResponse = await checkPass(
-          payload.password,
-          response.password
-        );
-        if (passResponse) {
-          return {
-            token: encode({
-              id: response.id,
-              email: response.email,
-            }),
-            user: {
-              id: response.id,
-              email: response.email,
-              username: response.username,
-              in_app_email: response.in_app_email,
-              is_expired: (response.plan && response.plan.is_expired) || true,
-              plan_name: response.plan && response.plan.name,
-              plan_slug: response.plan && response.plan.plan_slug,
-              is_onboarded: response.is_onboarded || false
-            },
-          };
-        } else {
-          throw new Error("Invalid email or password");
-        }
-      } else {
-        return {
-          token: encode({
-            id: response.id,
-            email: response.email,
-          }),
-          user: {
-            id: response.id,
-            email: response.email,
-            username: response.username,
-            in_app_email: response.in_app_email,
-            is_expired: (response.plan && response.plan.is_expired) || true,
-            plan_name: response.plan && response.plan.name,
-            plan_slug: response.plan && response.plan.plan_slug,
-            is_onboarded: response.is_onboarded
-          },
-        };
-      }
-    } else {
-      if (payload.auth_type === "local" && payload.password) {
-        const hashedPass = await hashPass(payload.password);
+    if (!response) {
+      const newUser = await saveUser(payload);
 
-        const data = {
-          password: hashedPass,
-          ...payload,
-        };
-
-        try {
-          const newUser = await saveUser(data, true);
-
-          return {
-            token: encode({
-              id: newUser.id,
-              email: newUser.email,
-            }),
-            user: {
-              id: newUser.id,
-              email: newUser.email,
-              username: newUser.username,
-              in_app_email: newUser.in_app_email,
-              is_expired: (newUser.plan && newUser.plan.is_expired) || true,
-              plan_name: newUser.plan && newUser.plan.name,
-              plan_slug: newUser.plan && newUser.plan.plan_slug,
-              is_onboarded: newUser.is_onboarded
-            },
-          };
-        } catch (error) {
-          throw new Error(error);
-        }
-      } else {
-        try {
-          const newUser = await saveUser(payload);
-
-          return {
-            token: encode({
-              id: newUser.id,
-              email: newUser.email,
-            }),
-            user: {
-              id: newUser.id,
-              email: newUser.email,
-              username: newUser.username,
-              in_app_email: newUser.in_app_email,
-              is_expired: (newUser.plan && newUser.plan.is_expired) || true,
-              plan_name: newUser.plan && newUser.plan.name,
-              plan_slug: newUser.plan && newUser.plan.plan_slug,
-              is_onboarded: newUser.is_onboarded
-            },
-          };
-        } catch (error) {
-          throw new Error(error);
-        }
-      }
+      return {
+        token: encode({
+          id: newUser.id,
+          email: newUser.email,
+        }),
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          username: newUser.username,
+          in_app_email: newUser.in_app_email,
+          is_expired: (newUser.plan && newUser.plan.is_expired) || true,
+          plan_name: newUser.plan && newUser.plan.name,
+          plan_slug: newUser.plan && newUser.plan.plan_slug,
+          is_onboarded: newUser.is_onboarded,
+        },
+      };
     }
+    return {
+      token: encode({
+        id: response.id,
+        email: response.email,
+      }),
+      user: {
+        id: response.id,
+        email: response.email,
+        username: response.username,
+        in_app_email: response.in_app_email,
+        is_expired: (response.plan && response.plan.is_expired) || true,
+        plan_name: response.plan && response.plan.name,
+        plan_slug: response.plan && response.plan.plan_slug,
+        is_onboarded: response.is_onboarded,
+      },
+    };
   } catch (error) {
-    console.log(error);
     throw new Error(error);
   }
 }
