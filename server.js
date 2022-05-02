@@ -10,6 +10,7 @@ import { schema } from "./graphql";
 import authChecker from "./middleware/auth";
 import eventsAPI from "./routes/events";
 import validatorAPI from "./routes/validator";
+import { getEmailJSONFromS3 } from "./middleware/aws";
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use(express.json());
 app.use("/event", eventsAPI);
 
 app.use("/check", validatorAPI);
+
+app.post('/get-email-data', getEmailJSONFromS3);
 
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);

@@ -24,8 +24,8 @@ model Account {
   categories       Category[]
   feed             Feed[]
   highlights       Highlight[]
-  created_at       DateTime                 @default(now())
-  updated_at       DateTime                 @updatedAt
+  created_at       DateTime?                 @default(now())
+  updated_at       DateTime?                 @updatedAt
 }
 
 model Plan {
@@ -53,8 +53,8 @@ model Plan {
   plan_status                    String?
   receipt_url                    String?
   subscriber_id                  String   @unique
-  created_at                     DateTime @default(now())
-  updated_at                     DateTime @updatedAt
+  created_at                     DateTime? @default(now())
+  updated_at                     DateTime? @updatedAt
 }
 
 model Subscriptions {
@@ -65,8 +65,8 @@ model Subscriptions {
   source_avatar   String?
   subscribers     AccountOnSubscriptions[]
   feed            Feed[]
-  created_at      DateTime                 @default(now())
-  updated_at      DateTime                 @updatedAt
+  created_at      DateTime?                 @default(now())
+  updated_at      DateTime?                 @updatedAt
 }
 
 model AccountOnSubscriptions {
@@ -77,8 +77,9 @@ model AccountOnSubscriptions {
   subscription_id String
   category        Category?     @relation(fields: [category_id], references: [id])
   category_id     String?
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
+  is_unsubscribed Boolean       @default(true)
+  created_at      DateTime?      @default(now())
+  updated_at      DateTime?      @updatedAt
 }
 
 model Feed {
@@ -92,8 +93,8 @@ model Feed {
   higlights       Highlight[]
   subscription    Subscriptions? @relation(fields: [subscription_id], references: [id])
   subscription_id String?
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
+  created_at      DateTime?       @default(now())
+  updated_at      DateTime?       @updatedAt
 }
 
 model Category {
@@ -103,8 +104,8 @@ model Category {
   account      Account                  @relation(fields: [account_id], references: [id])
   account_id   String
   account_subs AccountOnSubscriptions[]
-  created_at   DateTime                 @default(now())
-  updated_at   DateTime                 @updatedAt
+  created_at   DateTime?                 @default(now())
+  updated_at   DateTime?                 @updatedAt
 }
 
 model Highlight {
@@ -116,6 +117,6 @@ model Highlight {
   highlight_html String
   account        Account  @relation(fields: [account_id], references: [id])
   account_id     String
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @updatedAt
 }
