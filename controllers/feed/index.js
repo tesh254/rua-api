@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { EmailDeleteQueue as deleteS3FileQueue } from "../../bullmq/config";
+import { EmailDeleteQueue as deleteS3FileQueue } from "../../bullmq/issue-handler";
 
 const prisma = new PrismaClient();
 

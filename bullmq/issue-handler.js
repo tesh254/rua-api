@@ -176,6 +176,8 @@ EmailDeleteWorker.on("progress", (job, progress) => {
 
 EmailDeleteWorker.on("completed", (job, result) => {
   console.log(`Job ${job.id} completed with result ${result.message}`);
+
+  job.remove();
 });
 
 EmailDeleteWorker.on("failed", (job, err) => {

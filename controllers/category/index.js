@@ -14,7 +14,6 @@ export async function getCategories(_, value, { user }) {
 }
 
 export async function getCreatorsByCategory(_, { category_id }, { user }) {
-  console.log({ category_id });
   const where_condition = category_id
     ? {
         AND: [

@@ -4,13 +4,12 @@ import morgan from "morgan";
 import { graphqlHTTP } from "express-graphql";
 import Playground from "graphql-playground-middleware-express";
 import dotenv from "dotenv";
-import AWS from "aws-sdk";
-import unzipper from "unzipper";
 import { schema } from "./graphql";
 import authChecker from "./middleware/auth";
 import eventsAPI from "./routes/events";
 import validatorAPI from "./routes/validator";
 import { getEmailJSONFromS3 } from "./middleware/aws";
+import { reminderConsumer } from "./kafka/reminder-handler";
 
 dotenv.config();
 
@@ -66,6 +65,18 @@ app.set("PORT", process.env.PORT || 5555);
 if (process.env.NODE_ENV === "development") {
   app.get("/playground", Playground({ endpoint: "/graphql" }));
 }
+
+// reminderConsumer().catch(async (onFail) => {
+//   console.log(onFail.error);
+
+//   try {
+//     await onFail.consumer.disconnect();
+//   } catch(e) {
+//     console.error('Failed to gracefully disconnect consumer', e);
+//   }
+
+//   process.exit();
+// })
 
 app.listen(app.get("PORT"), (err) => {
   if (err) console.error(err);

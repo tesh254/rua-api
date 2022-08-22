@@ -107,8 +107,6 @@ export async function s3Reupload(folder, stored_file_name) {
 
   let parsed = await parseEmailFromFile(stored_file_name);
 
-  console.log(parsed)
-
   const headers = parsed.headers;
 
   const newHeaders = {
