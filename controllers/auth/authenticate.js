@@ -94,7 +94,6 @@ export async function authenticateUser(_, { payload }) {
       return {
         token: encode({
           id: newUser.id,
-          email: newUser.email,
         }),
         user: {
           id: newUser.id,
@@ -111,7 +110,6 @@ export async function authenticateUser(_, { payload }) {
     return {
       token: encode({
         id: response.id,
-        email: response.email,
       }),
       user: {
         id: response.id,
