@@ -98,7 +98,7 @@ export async function authenticateUser(_, { payload }) {
         user: {
           id: newUser.id,
           email: newUser.email,
-          username: newUser.username,
+          username: response.username ?? newUser.username,
           in_app_email: newUser.in_app_email,
           is_expired: (newUser.plan && newUser.plan.is_expired) || true,
           plan_name: newUser.plan && newUser.plan.name,

@@ -107,3 +107,5 @@ dist
 aws_s3_queue.json
 
 tmp/
+
+.DS_Store
