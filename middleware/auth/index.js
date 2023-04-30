@@ -4,6 +4,12 @@ import { decode } from "../../helpers/jwt";
 export default async function authChecker(req, res, next) {
   let user = null;
   if (req.headers.authorization) {
+
+    if (!req.headers.authorization.split(" ")[1]) {
+      req.user = null;
+      next();
+    }
+
     const payload = decode(req.headers.authorization.split(" ")[1]);
 
     user = await fetchAccount(payload.id);
